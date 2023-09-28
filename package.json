@@ -25,6 +25,7 @@
     "jsdoc": "^4.0.2"
   },
   "dependencies": {
+    "@inquirer/confirm": "^2.0.13",
     "commander": "^11.0.0",
     "ini": "^4.1.1"
   }

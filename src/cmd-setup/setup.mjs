@@ -1,7 +1,17 @@
 import * as process from 'node:process'
 import * as path from 'node:path'
 import * as fs from 'node:fs/promises'
-import { Command } from "commander";
+import confirm from '@inquirer/confirm'
+import { Command } from 'commander'
+
+async function accessible (file) {
+  try {
+    await fs.access(file)
+    return true
+  } catch {
+    return false
+  }
+}
 
 /**
 * Finds the Godot project file, starting in the given directory and moving
@@ -11,12 +21,13 @@ import { Command } from "commander";
 */
 async function findProject (at) {
   while (true) {
-    try {
-      const candidate = path.join(at, 'godot.project')
+    if (await accessible(at)) {
+      const candidate = path.join(at, 'project.godot')
       await fs.access(candidate)
 
       return candidate
-    } catch (e) {
+    }
+    else {
       const parentDir = path.dirname(at)
       if (parentDir === at) {
         throw Error('No Godot project found!')
@@ -31,19 +42,35 @@ async function setup () {
   const projectDir = path.dirname(await findProject(process.cwd()))
   const projectFile = path.join(projectDir, 'godpak.cfg')
 
+  if (await accessible(projectFile)) {
+    const overwrite = await confirm({
+      message: 'godpak.cfg already exists, overwrite?',
+      default: false
+    })
+
+    if (!overwrite) {
+      console.log('Overwrite cancelled')
+      return
+    }
+  }
+
   const data = [
     '[dependencies]',
     '[exports]'
   ].join('\n')
 
   await fs.writeFile(projectFile, data)
+  console.log('Created file', projectFile)
 }
 
 /**
+* Configure the setup command
 * @param {Command} program Program
 */
 export function setupCommand(program) {
-  program.command('setup')
-    .description('Setup a Godot project to use godpak')
-    .action(setup)
+  ['setup', 's'].forEach((cmd, i) => 
+    program.command(cmd, { hidden: i !== 0 })
+      .description('Setup a Godot project to use godpak')
+      .action(setup)
+  )
 }
