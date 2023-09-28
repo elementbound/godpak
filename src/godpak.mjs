@@ -4,7 +4,7 @@ import { Command } from 'commander'
 import { fileURLToPath } from 'node:url'
 import { setupCommand } from './cmd-setup/setup.mjs'
 
-function version () {
+function parseVersion () {
   return Promise.resolve(import.meta.url)
     .then(fileURLToPath)
     .then(path.dirname)
@@ -16,11 +16,12 @@ function version () {
 
 async function main () {
   const program = new Command()
+  const version = await parseVersion()
 
   program
     .name('gdpk')
     .description('A dependency manager for Godot')
-    .version(await version())
+    .version(`gdpk v${version}`, '-v, --version')
 
   setupCommand(program)
 
