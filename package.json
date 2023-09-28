@@ -1,10 +1,11 @@
 {
   "name": "godpak",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A dependency manager for Godot",
   "main": "src/godpak.js",
   "scripts": {
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "doc": "jsdoc -c .jsdoc.js -R README.md -d jsdoc src"
   },
   "keywords": [
     "godot",
@@ -17,6 +18,7 @@
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
-    "eslint-plugin-promise": "^6.0.0"
+    "eslint-plugin-promise": "^6.0.0",
+    "jsdoc": "^4.0.2"
   }
 }
