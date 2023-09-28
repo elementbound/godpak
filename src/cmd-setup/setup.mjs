@@ -1,8 +1,10 @@
+/* eslint-disable */
+import { Command } from 'commander'
+/* eslint-enable */
 import * as process from 'node:process'
 import * as path from 'node:path'
 import * as fs from 'node:fs/promises'
 import confirm from '@inquirer/confirm'
-import { Command } from 'commander'
 
 async function accessible (file) {
   try {
@@ -26,8 +28,7 @@ async function findProject (at) {
       await fs.access(candidate)
 
       return candidate
-    }
-    else {
+    } else {
       const parentDir = path.dirname(at)
       if (parentDir === at) {
         throw Error('No Godot project found!')
@@ -67,8 +68,8 @@ async function setup () {
 * Configure the setup command
 * @param {Command} program Program
 */
-export function setupCommand(program) {
-  ['setup', 's'].forEach((cmd, i) => 
+export function setupCommand (program) {
+  ['setup', 's'].forEach((cmd, i) =>
     program.command(cmd, { hidden: i !== 0 })
       .description('Setup a Godot project to use godpak')
       .action(setup)
