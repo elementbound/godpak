@@ -1,11 +1,22 @@
 {
   "name": "godpak",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A dependency manager for Godot",
   "main": "src/godpak.js",
   "scripts": {
+    "lint": "eslint src"
   },
-  "keywords": ["godot", "manager"],
+  "keywords": [
+    "godot",
+    "manager"
+  ],
   "author": "Tamas Galffy",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
+    "eslint-plugin-promise": "^6.0.0"
+  }
 }
