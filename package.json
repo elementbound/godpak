@@ -1,0 +1,11 @@
+{
+  "name": "godpak",
+  "version": "0.0.1",
+  "description": "A dependency manager for Godot",
+  "main": "src/godpak.js",
+  "scripts": {
+  },
+  "keywords": ["godot", "manager"],
+  "author": "Tamas Galffy",
+  "license": "MIT"
+}
