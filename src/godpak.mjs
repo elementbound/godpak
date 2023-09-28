@@ -2,6 +2,7 @@ import * as path from 'node:path'
 import * as fs from 'node:fs/promises'
 import { Command } from 'commander'
 import { fileURLToPath } from 'node:url'
+import { setupCommand } from './cmd-setup/setup.mjs'
 
 function version () {
   return Promise.resolve(import.meta.url)
@@ -21,12 +22,7 @@ async function main () {
     .description('A dependency manager for Godot')
     .version(await version())
 
-  program.command('greet')
-    .description('Display a greeting')
-    .argument('[who]', 'greeting target', 'world')
-    .action((who) => {
-      console.log(`Hello ${who}!`)
-    })
+  setupCommand(program)
 
   program.parse()
 }
