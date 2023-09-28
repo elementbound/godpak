@@ -8,9 +8,11 @@ import confirm from '@inquirer/confirm'
 
 async function accessible (file) {
   try {
+    console.log('access ?', file)
     await fs.access(file)
     return true
-  } catch {
+  } catch (e) {
+    console.log('access no', file, e)
     return false
   }
 }
@@ -23,10 +25,8 @@ async function accessible (file) {
 */
 async function findProject (at) {
   while (true) {
-    if (await accessible(at)) {
-      const candidate = path.join(at, 'project.godot')
-      await fs.access(candidate)
-
+    const candidate = path.join(at, 'project.godot')
+    if (await accessible(candidate)) {
       return candidate
     } else {
       const parentDir = path.dirname(at)
