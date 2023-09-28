@@ -1,7 +1,7 @@
 /**
 * Entry function for godpak
 */
-function main() {
+function main () {
   console.log('gdpk')
 }
 
