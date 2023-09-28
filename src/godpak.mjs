@@ -2,8 +2,9 @@ import * as path from 'node:path'
 import * as fs from 'node:fs/promises'
 import { Command } from 'commander'
 import { fileURLToPath } from 'node:url'
+import { setupCommand } from './cmd-setup/setup.mjs'
 
-function version () {
+function parseVersion () {
   return Promise.resolve(import.meta.url)
     .then(fileURLToPath)
     .then(path.dirname)
@@ -15,18 +16,14 @@ function version () {
 
 async function main () {
   const program = new Command()
+  const version = await parseVersion()
 
   program
     .name('gdpk')
     .description('A dependency manager for Godot')
-    .version(await version())
+    .version(`gdpk v${version}`, '-v, --version')
 
-  program.command('greet')
-    .description('Display a greeting')
-    .argument('[who]', 'greeting target', 'world')
-    .action((who) => {
-      console.log(`Hello ${who}!`)
-    })
+  setupCommand(program)
 
   program.parse()
 }

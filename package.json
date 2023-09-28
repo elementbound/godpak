@@ -1,6 +1,6 @@
 {
   "name": "godpak",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A dependency manager for Godot",
   "main": "src/godpak.mjs",
   "scripts": {
@@ -25,6 +25,8 @@
     "jsdoc": "^4.0.2"
   },
   "dependencies": {
-    "commander": "^11.0.0"
+    "@inquirer/confirm": "^2.0.13",
+    "commander": "^11.0.0",
+    "ini": "^4.1.1"
   }
 }
