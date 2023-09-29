@@ -69,9 +69,8 @@ async function setup () {
 * @param {Command} program Program
 */
 export function setupCommand (program) {
-  ['setup', 's'].forEach((cmd, i) =>
-    program.command(cmd, { hidden: i !== 0 })
+    program.command('setup')
+      .alias('s')
       .description('Setup a Godot project to use godpak')
       .action(setup)
-  )
 }

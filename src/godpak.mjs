@@ -3,6 +3,7 @@ import * as fs from 'node:fs/promises'
 import { Command } from 'commander'
 import { fileURLToPath } from 'node:url'
 import { setupCommand } from './cmd-setup/setup.mjs'
+import { GitSourceAdapter } from './source.adapter.mjs'
 
 function parseVersion () {
   return Promise.resolve(import.meta.url)
@@ -24,6 +25,10 @@ async function main () {
     .version(`gdpk v${version}`, '-v, --version')
 
   setupCommand(program)
+
+  program.command('clone <url> <dest>')
+    .description('Dummy command to clone repo')
+    .action((url, dest) => (new GitSourceAdapter()).fetch(url, dest))
 
   program.parse()
 }

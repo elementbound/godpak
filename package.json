@@ -27,6 +27,7 @@
   "dependencies": {
     "@inquirer/confirm": "^2.0.13",
     "commander": "^11.0.0",
-    "ini": "^4.1.1"
+    "ini": "^4.1.1",
+    "isomorphic-git": "^1.24.5"
   }
 }
