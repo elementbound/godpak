@@ -1,6 +1,6 @@
 {
   "name": "godpak",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A dependency manager for Godot",
   "main": "src/godpak.mjs",
   "scripts": {
@@ -28,6 +28,7 @@
     "@inquirer/confirm": "^2.0.13",
     "commander": "^11.0.0",
     "ini": "^4.1.1",
-    "isomorphic-git": "^1.24.5"
+    "isomorphic-git": "^1.24.5",
+    "terminal-kit": "^3.0.0"
   }
 }

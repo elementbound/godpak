@@ -3,6 +3,7 @@ import { Command } from 'commander'
 /* eslint-enable */
 import confirm from '@inquirer/confirm'
 import { requireProject } from '../project.mjs'
+import { logger } from '../log.mjs'
 
 async function setup () {
   const project = await requireProject()
@@ -14,13 +15,13 @@ async function setup () {
     })
 
     if (!overwrite) {
-      console.log('Overwrite cancelled')
+      logger.log('Overwrite cancelled')
       return
     }
   }
 
   await project.ensureGodpak()
-  console.log('Created file', project.godpakFile)
+  logger.log('Created file', project.godpakFile)
 }
 
 /**
