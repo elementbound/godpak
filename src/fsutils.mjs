@@ -26,10 +26,6 @@ export function gdpktmp () {
   return fs.mkdtemp(path.join(os.tmpdir(), 'gdpk'))
 }
 
-function sleep (t) {
-  return new Promise(resolve => setTimeout(resolve, t))
-}
-
 export async function copy (from, to, progress) {
   const entries = await fs.readdir(from, { recursive: true, withFileTypes: true })
 

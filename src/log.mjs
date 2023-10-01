@@ -22,8 +22,10 @@ export class Logger {
 
   message (level, msg) {
     if (this.#progress) {
+      /* eslint-disable no-useless-call */
       this.#progress.restoreCursor?.call(this.#progress)
       this.#progress.destroy?.call(this.#progress)
+      /* eslint-enable no-useless-call */
       this.#progress = undefined
       terminal.eraseLine()
     }

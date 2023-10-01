@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url'
 import { setupCommand } from './cmd-setup/setup.mjs'
 import { addCommand } from './cmd-add.mjs'
 import { logger } from './log.mjs'
-import { AssertionError } from 'node:assert'
 
 function parseVersion () {
   return Promise.resolve(import.meta.url)
@@ -34,7 +33,7 @@ async function main () {
     return 0
   } catch (e) {
     if (e instanceof Error) {
-      logger.error(e.message, '\n', e.stack.substring(e.stack.indexOf('\n')+2))
+      logger.error(e.message, '\n', e.stack.substring(e.stack.indexOf('\n') + 2))
     } else {
       logger.error(e.stack ?? e)
     }
