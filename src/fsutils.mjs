@@ -25,3 +25,26 @@ export async function accessible (file) {
 export function gdpktmp () {
   return fs.mkdtemp(path.join(os.tmpdir(), 'gdpk'))
 }
+
+function sleep (t) {
+  return new Promise(resolve => setTimeout(resolve, t))
+}
+
+export async function copy (from, to, progress) {
+  const entries = await fs.readdir(from, { recursive: true, withFileTypes: true })
+
+  let i = 0
+  for (const entry of entries) {
+    const fromPath = path.join(entry.path, entry.name)
+    const toPath = path.join(to, entry.name)
+
+    if (entry.isDirectory) {
+      await fs.mkdir(toPath, { recursive: true })
+    } else {
+      await fs.copyFile(fromPath, toPath)
+    }
+
+    ++i
+    progress?.call(progress, entry.name, i, entries.length)
+  }
+}

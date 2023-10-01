@@ -6,13 +6,9 @@ import * as path from 'node:path'
 import * as ini from 'ini'
 import { requireProject } from './project.mjs'
 import { GitSourceAdapter } from './source.adapter.mjs'
-import { gdpktmp } from './fsutils.mjs'
+import { copy, gdpktmp } from './fsutils.mjs'
 import { parsePackage } from './package.mjs'
 import { logger } from './log.mjs'
-
-function sleep (t) {
-  return new Promise(resolve => setTimeout(resolve, t))
-}
 
 async function add (source, addon) {
   // Setup project
@@ -36,10 +32,11 @@ async function add (source, addon) {
   // TODO: Check if addon is not already there
   const addonSrc = pkg.getAddonDirectory(addon)
   const addonDst = path.join(project.directory, '/addons/', addon)
-  await logger.spinner(`Copying from "${addonSrc}" to project`)
-  await fs.cp(addonSrc, addonDst, { recursive: true })
+  await copy(addonSrc, addonDst, (entry, done, all) => {
+    logger.progress(entry, done / all)
+  })
   await fs.rm(tmpdir, { recursive: true })
-  logger.log('Copied addon to project')
+  logger.info(`Copied addon ${addon} to project`)
 
   // Update project
   const projectData = ini.parse(await fs.readFile(project.godpakFile, { encoding: 'utf8' }))
