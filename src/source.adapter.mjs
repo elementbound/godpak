@@ -8,8 +8,7 @@ export class GitSourceAdapter {
       fs, http,
       dir: destination,
       url: source,
-      depth: 1,
-      onProgress: e => console.log('Progress', e)
+      depth: 1
     })
   }
 }
