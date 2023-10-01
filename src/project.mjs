@@ -1,5 +1,6 @@
 import * as path from 'node:path'
 import * as fs from 'node:fs/promises'
+import { accessible } from './fsutils.mjs'
 
 export const EMPTY_GODPAK = [
   '[dependencies]\n\n',
@@ -33,15 +34,6 @@ export class Project {
   }
 }
 
-async function accessible (file) {
-  try {
-    await fs.access(file)
-    return true
-  } catch (e) {
-    return false
-  }
-}
-
 /**
 * Finds the Godot project file, starting in the given directory and moving
 * backwards until it's found.
@@ -70,10 +62,11 @@ export async function findGodot (at) {
 * moving backwards until a Godot proejct is found. The found project *must*
 * have a Godot project file, but a godpak file is optional.
 *
-* @param {string} at Starting directory
+* @param {string} [at=process.cwd()] Starting directory
 * @returns {Promise<Project|undefined>} Project context or undefined
 */
 export async function findProject (at) {
+  at ??= process.cwd()
   const godotFile = await findGodot(at)
   if (!godotFile) {
     return undefined
@@ -93,11 +86,12 @@ export async function findProject (at) {
 * Convenience wrapper over {@link findProject} that throws if no project is
 * found.
 *
-* @param {string} at Starting directory
+* @param {string} [at=process.cwd()] Starting directory
 * @returns {Promise<Project>} Project context
 * @throws if no Godot project was found
 */
 export async function requireProject (at) {
+  at ??= process.cwd()
   const project = await findProject(at)
 
   if (project) {

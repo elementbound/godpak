@@ -1,12 +1,11 @@
 /* eslint-disable */
 import { Command } from 'commander'
 /* eslint-enable */
-import * as process from 'node:process'
 import confirm from '@inquirer/confirm'
 import { requireProject } from '../project.mjs'
 
 async function setup () {
-  const project = await requireProject(process.cwd())
+  const project = await requireProject()
 
   if (await project.hasGodpak()) {
     const overwrite = await confirm({
