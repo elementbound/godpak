@@ -6,37 +6,39 @@ import * as path from 'node:path'
 import * as ini from 'ini'
 import { requireProject } from './project.mjs'
 import { GitSourceAdapter } from './source.adapter.mjs'
-import { gdpktmp } from './fsutils.mjs'
+import { copy, gdpktmp } from './fsutils.mjs'
 import { parsePackage } from './package.mjs'
+import { logger } from './log.mjs'
 
 async function add (source, addon) {
+  // Setup project
   const project = await requireProject()
   const tmpdir = await gdpktmp()
 
+  // Fetch source
   // TODO: Grab from list
   const sourceAdapter = new GitSourceAdapter()
-  console.log('Cloning into', tmpdir)
+  sourceAdapter.on('progress', (phase, loaded, total) => logger.progress(phase, loaded / (total ?? loaded)))
   await sourceAdapter.fetch(source, tmpdir)
+  logger.log('Cloned', source)
 
   const pkg = await parsePackage(source, tmpdir)
-  addon ??= pkg.getDefaultAddon()
+  if (!addon) {
+    addon ??= pkg.getDefaultAddon()
+    logger.log('Defaulting to addon', addon)
+  }
 
+  // Copy to project
   // TODO: Check if addon is not already there
   const addonSrc = pkg.getAddonDirectory(addon)
   const addonDst = path.join(project.directory, '/addons/', addon)
-  console.log(`Copying from "${addonSrc}" to "${addonDst}"...`)
-  await fs.cp(addonSrc, addonDst, {
-    filter: (src, dst) => {
-      console.log(src, '->', dst)
-      return true
-    },
-    recursive: true
+  await copy(addonSrc, addonDst, (entry, done, all) => {
+    logger.progress(entry, done / all)
   })
-  console.log('Addon copied to project!')
-
   await fs.rm(tmpdir, { recursive: true })
-  console.log('Clone freed')
+  logger.info(`Copied addon ${addon} to project`)
 
+  // Update project
   const projectData = ini.parse(await fs.readFile(project.godpakFile, { encoding: 'utf8' }))
   projectData.dependencies ??= {}
   projectData.dependencies[addon] = source

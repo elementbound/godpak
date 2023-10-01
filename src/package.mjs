@@ -4,6 +4,7 @@ import * as fs from 'node:fs/promises'
 import * as ini from 'ini'
 import { accessible } from './fsutils.mjs'
 import { findProject } from './project.mjs'
+import { logger } from './log.mjs'
 
 export class Package {
   source = ''
@@ -43,12 +44,12 @@ export class Package {
 */
 export async function parsePackage (source, at) {
   if (!await accessible(path.join(at, '/project.godot'))) {
-    console.warn(`No Godot project found for "${source}" at "${at}", package might not be valid`)
+    logger.warn(`No Godot project found for "${source}" at "${at}", package might not be valid`)
   }
 
   const project = await findProject(at)
-  if (await project.hasGodpak()) {
-    console.log(`Found godpak file for ${source}!`)
+  if (project && await project.hasGodpak()) {
+    logger.log(`Found godpak file for ${source}!`)
 
     const projectData = ini.parse(await fs.readFile(project.godpakFile))
 
@@ -59,7 +60,10 @@ export async function parsePackage (source, at) {
     })
   }
 
-  console.log(`No godpak file found for ${source}`)
+  logger.log(`No godpak file found for ${source}`)
+
+  const addonsDir = path.join(at, 'addons')
+  assert(await accessible(addonsDir), `No addons directory in source ${source}!`)
   const addons = (await fs.readdir(path.join(at, 'addons'), { withFileTypes: true }))
     .filter(de => de.isDirectory())
     .map(de => de.name)
