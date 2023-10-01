@@ -3,6 +3,7 @@ import * as fs from 'node:fs/promises'
 import { Command } from 'commander'
 import { fileURLToPath } from 'node:url'
 import { setupCommand } from './cmd-setup/setup.mjs'
+import { addCommand } from './cmd-add.mjs'
 
 function parseVersion () {
   return Promise.resolve(import.meta.url)
@@ -24,6 +25,7 @@ async function main () {
     .version(`gdpk v${version}`, '-v, --version')
 
   setupCommand(program)
+  addCommand(program)
 
   program.parse()
 }
