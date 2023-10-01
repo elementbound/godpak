@@ -37,6 +37,8 @@ export class Package {
 /**
 * Parse a fetched package, gathering metadata ( e.g. addons provided ).
 *
+* @param {string} source Source
+* @param {string} at Package directory
 * @returns {Promise<Package>} Package
 */
 export async function parsePackage (source, at) {
