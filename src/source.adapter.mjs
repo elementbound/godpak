@@ -5,7 +5,8 @@ import * as http from 'isomorphic-git/http/node/index.cjs'
 export class GitSourceAdapter {
   async fetch (source, destination) {
     await git.clone({
-      fs, http,
+      fs,
+      http,
       dir: destination,
       url: source,
       depth: 1

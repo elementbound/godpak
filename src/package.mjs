@@ -53,7 +53,8 @@ export async function parsePackage (source, at) {
     const projectData = ini.parse(await fs.readFile(project.godpakFile))
 
     return new Package({
-      source, directory: at,
+      source,
+      directory: at,
       addons: projectData.exports ?? []
     })
   }

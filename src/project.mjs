@@ -23,11 +23,11 @@ export class Project {
     Object.freeze(this)
   }
 
-  async hasGodpak() {
+  async hasGodpak () {
     return await accessible(this.godpakFile)
   }
 
-  async ensureGodpak() {
+  async ensureGodpak () {
     if (!await this.hasGodpak()) {
       await fs.writeFile(this.godpakFile, EMPTY_GODPAK, { encoding: 'utf8' })
     }

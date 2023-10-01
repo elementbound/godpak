@@ -22,6 +22,6 @@ export async function accessible (file) {
 *
 * @returns {Promise<string>} Directory
 */
-export function gdpktmp() {
+export function gdpktmp () {
   return fs.mkdtemp(path.join(os.tmpdir(), 'gdpk'))
 }

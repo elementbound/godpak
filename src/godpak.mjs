@@ -3,7 +3,6 @@ import * as fs from 'node:fs/promises'
 import { Command } from 'commander'
 import { fileURLToPath } from 'node:url'
 import { setupCommand } from './cmd-setup/setup.mjs'
-import { GitSourceAdapter } from './source.adapter.mjs'
 import { addCommand } from './cmd-add.mjs'
 
 function parseVersion () {

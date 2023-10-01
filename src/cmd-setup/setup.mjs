@@ -28,8 +28,8 @@ async function setup () {
 * @param {Command} program Program
 */
 export function setupCommand (program) {
-    program.command('setup')
-      .alias('s')
-      .description('Setup a Godot project to use godpak')
-      .action(setup)
+  program.command('setup')
+    .alias('s')
+    .description('Setup a Godot project to use godpak')
+    .action(setup)
 }
