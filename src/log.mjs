@@ -4,7 +4,8 @@ const terminal = termkit.terminal
 const Level = Object.freeze({
   trace: 100,
   debug: 200,
-  info: 300,
+  success: 380,
+  info: 399,
   warn: 400,
   error: 500
 })
@@ -12,6 +13,7 @@ const Level = Object.freeze({
 const Prefixes = {
   [Level.trace]: '',
   [Level.debug]: '',
+  [Level.success]: '✅ ',
   [Level.info]: '',
   [Level.warn]: '⚠️ ',
   [Level.error]: '⛔️ '
@@ -37,6 +39,7 @@ export class Logger {
   debug = this.#makeMethod(Level.debug)
   info = this.#makeMethod(Level.info)
   log = this.#makeMethod(Level.info)
+  success = this.#makeMethod(Level.success)
   warn = this.#makeMethod(Level.warn)
   error = this.#makeMethod(Level.error)
 
