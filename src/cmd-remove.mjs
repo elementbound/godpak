@@ -3,23 +3,25 @@ import { Command } from 'commander'
 /* eslint-enable */
 import assert from 'node:assert'
 import * as fs from 'node:fs/promises'
-import * as path from 'node:path'
-import * as ini from 'ini'
-import { requireGodotProject, requireGodpak } from './project.mjs'
 import { accessible } from './fsutils.mjs'
 import { logger } from './log.mjs'
+import { parsePackage } from './package.mjs'
+import { exploreContext } from './context.mjs'
 
 async function remove (addon) {
   // Setup project
-  const project = await requireGodotProject()
-    .then(requireGodpak)
+  const context = (await exploreContext())
+    .requireGodot()
+    .requireGodpak()
+  const pakage = await parsePackage('<context>', context.workingDirectory)
 
-  const projectData = ini.parse(await fs.readFile(project.godpakFile, { encoding: 'utf8' }))
-  projectData.dependencies ??= {}
-  assert(projectData.dependencies[addon], `Addon "${addon}" is not a dependency of this project!`)
+  assert(
+    pakage.hasDependency(addon),
+    `Addon "${addon}" is not a dependency of this project!`
+  )
 
   // Remove addon from disk
-  const addonPath = path.join(project.directory, '/addons/', addon)
+  const addonPath = pakage.getAddonDirectory(addon)
   if (await accessible(addonPath)) {
     await logger.spinner(`Removing directory "${addonPath}"`)
     await fs.rm(addonPath, { recursive: true })
@@ -29,9 +31,9 @@ async function remove (addon) {
   }
 
   // Remove from project
-  delete projectData.dependencies[addon]
-  await fs.writeFile(project.godpakFile, ini.stringify(projectData))
-  logger.info(`Addon "${addon}" removed from project`)
+  pakage.removeDependency(addon)
+  await pakage.persist()
+  logger.success(`Addon "${addon}" removed from project`)
 }
 
 /**
