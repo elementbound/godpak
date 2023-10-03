@@ -4,15 +4,16 @@ import { Command } from 'commander'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 import * as ini from 'ini'
-import { requireProject } from './project.mjs'
 import { GitSourceAdapter } from './source.adapter.mjs'
 import { copy, gdpktmp } from './fsutils.mjs'
 import { parsePackage } from './package.mjs'
 import { logger } from './log.mjs'
+import { requireGodotProject, requireGodpak } from './project.mjs'
 
 async function add (source, addon) {
   // Setup project
-  const project = await requireProject()
+  const project = await requireGodotProject()
+    .then(requireGodpak)
   const tmpdir = await gdpktmp()
 
   // Fetch source

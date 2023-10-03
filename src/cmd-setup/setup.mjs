@@ -2,11 +2,11 @@
 import { Command } from 'commander'
 /* eslint-enable */
 import confirm from '@inquirer/confirm'
-import { requireProject } from '../project.mjs'
 import { logger } from '../log.mjs'
+import { requireGodotProject } from '../project.mjs'
 
 async function setup () {
-  const project = await requireProject()
+  const project = await requireGodotProject()
 
   if (await project.hasGodpak()) {
     const overwrite = await confirm({
