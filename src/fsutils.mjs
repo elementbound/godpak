@@ -32,7 +32,7 @@ export async function copy (from, to, progress) {
   let i = 0
   for (const entry of entries) {
     const fromPath = path.join(entry.path, entry.name)
-    const toPath = path.join(to, entry.name)
+    const toPath = path.join(to, path.relative(from, fromPath))
 
     if (entry.isDirectory()) {
       await fs.mkdir(toPath, { recursive: true })

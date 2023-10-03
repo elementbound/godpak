@@ -1,6 +1,6 @@
 {
   "name": "godpak",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A dependency manager for Godot",
   "main": "src/godpak.mjs",
   "scripts": {
