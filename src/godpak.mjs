@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { setupCommand } from './cmd-setup/setup.mjs'
 import { addCommand } from './cmd-add.mjs'
 import { logger } from './log.mjs'
+import { removeCommand } from './cmd-remove.mjs'
 
 function parseVersion () {
   return Promise.resolve(import.meta.url)
@@ -27,6 +28,7 @@ async function main () {
 
   setupCommand(program)
   addCommand(program)
+  removeCommand(program)
 
   try {
     await program.parseAsync()

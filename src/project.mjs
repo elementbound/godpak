@@ -1,5 +1,6 @@
 import * as path from 'node:path'
 import * as fs from 'node:fs/promises'
+import assert from 'node:assert'
 import { accessible } from './fsutils.mjs'
 
 export const EMPTY_GODPAK = [
@@ -90,7 +91,7 @@ export async function findProject (at) {
 * @returns {Promise<Project>} Project context
 * @throws if no Godot project was found
 */
-export async function requireProject (at) {
+export async function requireGodotProject (at) {
   at ??= process.cwd()
   const project = await findProject(at)
 
@@ -99,4 +100,16 @@ export async function requireProject (at) {
   } else {
     throw new Error(`No Godot project found at "${at}"!`)
   }
+}
+
+/**
+* Ensure the project has a godpak file.
+*
+* @param {Project} project Project
+* @returns {Promise<Project>} Project
+* @throws if no godpak file exists
+*/
+export async function requireGodpak (project) {
+  assert(await project.hasGodpak(), `No godpak file found at "${project.directory}"!`)
+  return project
 }
