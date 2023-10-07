@@ -1,28 +1,25 @@
 /* eslint-disable */
 import { Command } from 'commander'
 /* eslint-enable */
-import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
-import { GitSourceAdapter } from '../source.adapter.mjs'
-import { copy, gdpktmp } from '../fsutils.mjs'
+import { copy } from '../fsutils.mjs'
 import { logger } from '../log.mjs'
-import { Project, requireRootProject } from '../project/project.mjs'
+import { requireProject, requireRootProject } from '../project/project.mjs'
 import { AddonLocator } from '../project/addon.locator.mjs'
+import { storage } from '../storage/project.storage.mjs'
 
 async function add (address) {
   // Setup project
   const project = await requireRootProject()
-  const tmpdir = await gdpktmp()
   const locator = AddonLocator.parse(address)
 
   // Fetch source
-  // TODO: Grab from list
-  const sourceAdapter = new GitSourceAdapter()
-  sourceAdapter.on('progress', (phase, loaded, total) => logger.progress(phase, loaded / (total ?? loaded)))
-  await sourceAdapter.fetch(locator, tmpdir)
+  storage.on('progress', (phase, loaded, total) => logger.progress(phase, loaded / (total ?? loaded)))
+  const tmpdir = await storage.fetch(locator)
   logger.log('Cloned', locator.source)
+  storage.removeAllListeners('progress')
 
-  const sourceProject = await Project.explore(tmpdir)
+  const sourceProject = await requireProject(tmpdir)
   if (!locator.name) {
     locator.name = sourceProject.requireDefaultExport()
     logger.log('Defaulting to addon', locator.name)
@@ -42,7 +39,6 @@ async function add (address) {
   await copy(addonSrc, addonDst, (entry, done, all) => {
     logger.progress(entry, done / all)
   })
-  await fs.rm(tmpdir, { recursive: true })
   logger.info(`Copied addon ${locator.stringify()} to project`)
 
   // Update project

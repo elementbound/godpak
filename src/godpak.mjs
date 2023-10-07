@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { logger } from './log.mjs'
 import { addCommand } from './command/add.mjs'
 import { removeCommand } from './command/remove.mjs'
+import { storage } from './storage/project.storage.mjs'
 
 function parseVersion () {
   return Promise.resolve(import.meta.url)
@@ -38,6 +39,8 @@ async function main () {
       logger.error(e.stack ?? e)
     }
     return 1
+  } finally {
+    await storage.cleanup()
   }
 }
 
