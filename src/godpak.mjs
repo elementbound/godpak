@@ -2,9 +2,9 @@ import * as path from 'node:path'
 import * as fs from 'node:fs/promises'
 import { Command } from 'commander'
 import { fileURLToPath } from 'node:url'
-import { addCommand } from './cmd-add.mjs'
 import { logger } from './log.mjs'
-import { removeCommand } from './cmd-remove.mjs'
+import { addCommand } from './command/add.mjs'
+import { removeCommand } from './command/remove.mjs'
 
 function parseVersion () {
   return Promise.resolve(import.meta.url)

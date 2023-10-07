@@ -54,11 +54,11 @@ export class AddonLocator extends DataObject {
         version: undefined
       })
     } else if (parts.length === 2) {
-      // Source with addon name
+      // Source with version
       return new AddonLocator().with({
-        name: parts[0],
-        source: parts[1],
-        version: undefined
+        name: undefined,
+        source: parts[0],
+        version: parts[1]
       })
     } else {
       // Name, source, version

@@ -3,11 +3,11 @@ import { Command } from 'commander'
 /* eslint-enable */
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
-import { GitSourceAdapter } from './source.adapter.mjs'
-import { copy, gdpktmp } from './fsutils.mjs'
-import { logger } from './log.mjs'
-import { Project, requireRootProject } from './project/project.mjs'
-import { AddonLocator } from './project/addon.locator.mjs'
+import { GitSourceAdapter } from '../source.adapter.mjs'
+import { copy, gdpktmp } from '../fsutils.mjs'
+import { logger } from '../log.mjs'
+import { Project, requireRootProject } from '../project/project.mjs'
+import { AddonLocator } from '../project/addon.locator.mjs'
 
 async function add (address) {
   // Setup project
@@ -19,7 +19,7 @@ async function add (address) {
   // TODO: Grab from list
   const sourceAdapter = new GitSourceAdapter()
   sourceAdapter.on('progress', (phase, loaded, total) => logger.progress(phase, loaded / (total ?? loaded)))
-  await sourceAdapter.fetch(locator.source, tmpdir)
+  await sourceAdapter.fetch(locator, tmpdir)
   logger.log('Cloned', locator.source)
 
   const sourceProject = await Project.explore(tmpdir)
