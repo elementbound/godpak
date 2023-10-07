@@ -57,7 +57,7 @@ export class Addon extends DataObject {
 
     const text = await fsp.readFile(this.file, { encoding: 'utf8' })
     this.#raw = cfg.parse(text)
-    const deps = Object.entries(this.#raw.get('plugin', 'dependencies') ?? {})
+    const deps = Object.entries(this.#raw.enumerate('dependencies') ?? {})
       .map(([name, locator]) => [name, AddonLocator.parse(locator).with({ name })])
       .reduce(toObject(), {})
 
