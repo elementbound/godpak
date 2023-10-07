@@ -1,11 +1,12 @@
 {
   "name": "godpak",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A dependency manager for Godot",
   "main": "src/godpak.mjs",
   "scripts": {
     "lint": "eslint --ext .mjs src",
-    "doc": "jsdoc -c .jsdoc.js -R README.md -d jsdoc src"
+    "doc": "jsdoc -c .jsdoc.js -R README.md -d jsdoc src",
+    "test": "node --test test"
   },
   "bin": {
     "gdpk": "src/godpak.mjs"

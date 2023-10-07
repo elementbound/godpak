@@ -2,7 +2,6 @@ import * as path from 'node:path'
 import * as fs from 'node:fs/promises'
 import { Command } from 'commander'
 import { fileURLToPath } from 'node:url'
-import { setupCommand } from './cmd-setup/setup.mjs'
 import { addCommand } from './cmd-add.mjs'
 import { logger } from './log.mjs'
 import { removeCommand } from './cmd-remove.mjs'
@@ -26,7 +25,6 @@ async function main () {
     .description('A dependency manager for Godot')
     .version(`gdpk v${version}`, '-v, --version')
 
-  setupCommand(program)
   addCommand(program)
   removeCommand(program)
 
