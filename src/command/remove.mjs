@@ -3,8 +3,8 @@ import { Command } from 'commander'
 /* eslint-enable */
 import assert from 'node:assert'
 import * as fs from 'node:fs/promises'
-import { logger } from './log.mjs'
-import { requireRootProject } from './project/project.mjs'
+import { logger } from '../log.mjs'
+import { requireRootProject } from '../project/project.mjs'
 
 async function remove (addonName) {
   // Setup project
