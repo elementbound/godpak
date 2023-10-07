@@ -4,53 +4,51 @@ import { Command } from 'commander'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 import { GitSourceAdapter } from './source.adapter.mjs'
-import { accessible, copy, gdpktmp } from './fsutils.mjs'
-import { PackageEntry, parsePackage } from './package.mjs'
+import { copy, gdpktmp } from './fsutils.mjs'
 import { logger } from './log.mjs'
-import { exploreContext } from './context.mjs'
+import { Project, requireRootProject } from './project/project.mjs'
+import { AddonLocator } from './project/addon.locator.mjs'
 
-async function add (source, addon) {
+async function add (address) {
   // Setup project
-  const context = (await exploreContext())
-    .requireGodot()
-    .requireGodpak()
-  const pakage = await parsePackage('<context>', context.workingDirectory)
+  const project = await requireRootProject()
   const tmpdir = await gdpktmp()
+  const locator = AddonLocator.parse(address)
 
   // Fetch source
   // TODO: Grab from list
   const sourceAdapter = new GitSourceAdapter()
   sourceAdapter.on('progress', (phase, loaded, total) => logger.progress(phase, loaded / (total ?? loaded)))
-  await sourceAdapter.fetch(source, tmpdir)
-  logger.log('Cloned', source)
+  await sourceAdapter.fetch(locator.source, tmpdir)
+  logger.log('Cloned', locator.source)
 
-  const dependency = await parsePackage(source, tmpdir)
-  if (!addon) {
-    addon = dependency.requireDefaultExport()
-    logger.log('Defaulting to addon', addon)
+  const sourceProject = await Project.explore(tmpdir)
+  if (!locator.name) {
+    locator.name = sourceProject.requireDefaultExport()
+    logger.log('Defaulting to addon', locator.name)
   }
+  locator.version ??= 'latest'
+  const sourceAddon = sourceProject.addons[locator.name]
 
   // Check if addon is already there
-  if (pakage.hasDependency(addon) && await accessible(pakage.getAddonDirectory(addon))) {
+  if (project.dependencies[sourceAddon.name]) {
     logger.success('Addon already present, doing nothing')
     return
   }
 
   // Copy to project
-  const addonSrc = dependency.getExportDirectory(addon)
-  const addonDst = path.join(context.addonsDirectory, addon)
+  const addonSrc = sourceAddon.directory
+  const addonDst = path.join(project.addonsDirectory, sourceAddon.name)
   await copy(addonSrc, addonDst, (entry, done, all) => {
     logger.progress(entry, done / all)
   })
   await fs.rm(tmpdir, { recursive: true })
-  logger.info(`Copied addon ${addon} to project`)
+  logger.info(`Copied addon ${locator.stringify()} to project`)
 
   // Update project
-  pakage.dependencies.push(new PackageEntry({
-    addon, source
-  }))
-  await pakage.persist()
-  logger.success(`Added dependency "${addon}" from source "${source}"`)
+  project.dependencies[sourceAddon.name] = locator
+  await project.persist()
+  logger.success(`Added dependency "${locator.stringify()}"`)
 }
 
 /**
@@ -58,9 +56,8 @@ async function add (source, addon) {
 * @param {Command} program Program
 */
 export function addCommand (program) {
-  program.command('add <source> [addon]')
+  program.command('add <locator>')
     .alias('a')
-    .description('Add an addon as a dependency. If the source contains only ' +
-      'a single addon, the addon specifier can be omitted.')
+    .description('Add an addon by locator as a dependency.')
     .action(add)
 }
