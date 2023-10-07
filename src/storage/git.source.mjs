@@ -1,12 +1,13 @@
 /* eslint-disable */
-import { AddonLocator } from './project/addon.locator.mjs'
+import { AddonLocator } from '../project/addon.locator.mjs'
 /* eslint-enable */
 import * as git from 'isomorphic-git'
 import * as fs from 'node:fs'
 import * as http from 'isomorphic-git/http/node/index.cjs'
 import { EventEmitter } from 'node:events'
+import { fail } from 'node:assert'
 
-export class GitSourceAdapter extends EventEmitter {
+export class GitSource extends EventEmitter {
   /**
   * Fetch source to destination directory
   * @param {AddonLocator} source Source locator
@@ -50,6 +51,8 @@ export class GitSourceAdapter extends EventEmitter {
         ref: 'v' + source.version,
         onProgress: e => this.emit('progress', e.phase, e.loaded, e.total)
       })
+    } else {
+      fail(`Unknown version on source "${source.source}": "${source.version}"`)
     }
   }
 }
