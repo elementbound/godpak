@@ -1,12 +1,12 @@
 /* eslint-disable */
 import { AddonLocator } from "./addon.locator.mjs"
 import { Addon } from "./addon.mjs"
+import { ConfigData, cfg } from '../cfg.mjs'
 /* eslint-enable */
 import { DataObject } from '../data.object.mjs'
 import assert, { fail } from 'node:assert'
 import * as path from 'node:path'
 import * as fsp from 'node:fs/promises'
-import * as ini from 'ini'
 import { accessible } from '../fsutils.mjs'
 import { toObject } from '../funtils.mjs'
 import { PackedStringArray } from './packed.array.mjs'
@@ -20,7 +20,7 @@ const GODOT_FILE = 'project.godot'
 export class Project extends DataObject {
   /**
   * Raw project settings as stored on disk
-  * @type {object}
+  * @type {ConfigData}
   */
   #raw
 
@@ -86,14 +86,11 @@ export class Project extends DataObject {
   */
   async load () {
     const text = await fsp.readFile(this.file, { encoding: 'utf8' })
-    this.#raw = ini.parse(text)
-    this.#raw.godpak ??= {}
-    this.#raw.godpak.dependencies ??= PackedStringArray.stringify([])
-    this.#raw.godpak.exports ??= PackedStringArray.stringify([])
+    this.#raw = cfg.parse(text)
 
     // Load exports and dependencies
-    this.exports = PackedStringArray.parse(this.#raw.godpak.exports) ?? []
-    this.dependencies = (PackedStringArray.parse(this.#raw.godpak.dependencies) ?? [])
+    this.exports = PackedStringArray.parse(this.#raw.get('godpak', 'exports')) ?? []
+    this.dependencies = (PackedStringArray.parse(this.#raw.get('godpak', 'dependencies')) ?? [])
       .map(AddonLocator.parse)
       .map(dep => [dep.name, dep])
       .reduce(toObject(), {})
@@ -118,20 +115,19 @@ export class Project extends DataObject {
   async persist () {
     assert(this.#raw, `Settings not loaded for project at "${this.directory}", can't persist!`)
 
-    this.#raw.godpak ??= {}
-
     if (this.dependencies !== {}) {
-      this.#raw.godpak.dependencies = PackedStringArray.stringify(
+      this.#raw.set('godpak', 'dependencies', PackedStringArray.stringify(
         Object.values(this.dependencies)
           .map(addonLocator => addonLocator.stringify())
-      )
+      ))
     }
 
     if (this.exports.length !== 0) {
+      this.#raw.set('godpak', 'exports', PackedStringArray.stringify(this.exports))
       this.#raw.godpak.exports = PackedStringArray.stringify(this.exports)
     }
 
-    const text = ini.stringify(this.#raw)
+    const text = cfg.stringify(this.#raw)
     await fsp.writeFile(this.file, text, { encoding: 'utf8' })
     return this
   }
