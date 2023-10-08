@@ -26,6 +26,13 @@ export function gdpktmp () {
   return fs.mkdtemp(path.join(os.tmpdir(), 'gdpk'))
 }
 
+/**
+* Copy files recursively from one place to another.
+* @param {string} from Source path
+* @param {string} to Target path
+* @param {(name: string, copied: number, total: number): void} progress Progress callback
+* @returns {Promise<void>}
+*/
 export async function copy (from, to, progress) {
   const entries = await fs.readdir(from, { recursive: true, withFileTypes: true })
 
@@ -42,6 +49,6 @@ export async function copy (from, to, progress) {
     }
 
     ++i
-    progress?.call(progress, entry.name, i, entries.length)
+    progress && progress(entry.name, i, entries.length)
   }
 }

@@ -61,6 +61,7 @@ export function toUnique (mapper) {
 * ```
 */
 export function grouping (mapper) {
+  mapper ??= x => x
   return function (acc, item) {
     const key = mapper(item)
     const group = acc.find(g => g?.at(0) === key)

@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { AddonLocator } from '../project/addon.locator.mjs'
 /* eslint-enable */
+import assert from 'node:assert'
 import { DataObject } from '../data.object.mjs'
 import { grouping, toObject, toUnique } from '../funtils.mjs'
 import { logger } from '../log.mjs'
@@ -40,19 +41,6 @@ export class DependencyTree extends DataObject {
   dependencies = []
 
   /**
-  * Find conflicts in the dependency tree.
-  * @returns {Record<string, DependencyTree[]>}
-  */
-  findConflicts () {
-    // TODO: Implement version compatibility, instead of failing on two different versions
-    const conflicts = this.dependencies.reduce(grouping(dep => dep.source.name), [])
-      .filter(([, group]) => group.length > 1)
-      .reduce(toObject(), {})
-
-    return conflicts
-  }
-
-  /**
   * Flatten the dependency tree into a list of addons to be installed.
   * @returns {AddonLocator[]} Addons
   * @throws {DependencyConflictError} for conflicting dependencies
@@ -78,7 +66,7 @@ export class DependencyTree extends DataObject {
   *
   * @param {object} root Artifact
   * @param {Record<string, AddonLocator>} root.dependencies Artifact's dependencies
-  * @param {(dependency: DependencyNode) => void} progress Progress callback
+  * @param {(dependency: DependencyNode, visited: number, remaining: number) => void} progress Progress callback
   * @returns {Promise<DependencyTree>} Dependencies
   */
   static async resolve (root, progress) {
@@ -102,7 +90,6 @@ export class DependencyTree extends DataObject {
       progress && progress(dependency, visited.size, queue.length)
 
       if (visited.has(source)) {
-        console.log('Already visited, skipping', source)
         continue
       }
 
@@ -117,6 +104,7 @@ export class DependencyTree extends DataObject {
       visited.add(source)
 
       const addon = project.addons[source.name]
+      assert(addon, `Couldn't find addon in project: ${source.name}`)
       Object.values(addon.dependencies)
         .map(locator => new DependencyNode().with({ path: [...dependency.path, dependency.source], source: locator }))
         .forEach(dep => queue.push(dep))

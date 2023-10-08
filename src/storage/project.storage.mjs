@@ -4,7 +4,6 @@ import { AddonLocator } from '../project/addon.locator.mjs'
 import * as fsp from 'node:fs/promises'
 import * as events from 'node:events'
 import { gdpktmp } from '../fsutils.mjs'
-import { logger } from '../log.mjs'
 import { GitSource } from './git.source.mjs'
 
 /**
@@ -18,6 +17,7 @@ export class ProjectStorage extends events.EventEmitter {
 
   /**
   * Fetch project from source locator
+  * @param {AddonLocator} locator Addon locator
   * @returns {Promise<string>} Resulting directory
   */
   async fetch (locator) {
@@ -42,7 +42,6 @@ export class ProjectStorage extends events.EventEmitter {
   async cleanup () {
     for (const [, directory] of this.#cache.entries()) {
       await fsp.rm(directory, { recursive: true })
-      logger.info('Cleanup:', directory)
     }
 
     this.#cache.clear()
