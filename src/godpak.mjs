@@ -7,7 +7,7 @@ import { addCommand } from './command/add.mjs'
 import { removeCommand } from './command/remove.mjs'
 import { storage } from './storage/project.storage.mjs'
 import { installCommand } from './command/install.mjs'
-import { DependencyConflictError } from './project/dependencies.mjs'
+import { DependencyConflictError } from './dependencies/dependency.tree.mjs'
 
 function parseVersion () {
   return Promise.resolve(import.meta.url)

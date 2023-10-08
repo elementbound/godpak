@@ -51,20 +51,22 @@ export function toUnique (mapper) {
 *
 * @template T, U
 * @param {function(T): U} [mapper] Mapper
-* @returns {function(Record<U, T>, T): Record<U, T>} Reducer
+* @returns {function([U, T[]][], T): [U, T[]][]} Reducer
 *
 * @example
 * ```js
 * [ 'apple', 'orange', 'almond', 'opal' ]
-*   .reduce(grouping(str => str.charAt(0)), {})
-* // { a: ['apple', 'almond'], o: ['orange', 'opal'] }
+*   .reduce(grouping(str => str.charAt(0)), [])
+* // [['a', ['apple', 'almond']], ['o', ['orange', 'opal']] }
 * ```
 */
 export function grouping (mapper) {
   return function (acc, item) {
     const key = mapper(item)
-    acc[key] ??= []
-    acc[key].push(item)
+    const group = acc.find(g => g?.at(0) === key)
+    group
+      ? group.at(1).push(item)
+      : acc.push([key, [item]])
 
     return acc
   }
