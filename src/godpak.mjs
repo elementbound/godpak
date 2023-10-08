@@ -7,7 +7,7 @@ import { addCommand } from './command/add.mjs'
 import { removeCommand } from './command/remove.mjs'
 import { storage } from './storage/project.storage.mjs'
 import { installCommand } from './command/install.mjs'
-import { DependencyConflictError } from './project/dependencies.mjs'
+import { DependencyConflictError } from './dependencies/dependency.tree.mjs'
 
 function parseVersion () {
   return Promise.resolve(import.meta.url)
@@ -37,13 +37,13 @@ async function main () {
     return 0
   } catch (e) {
     if (e instanceof DependencyConflictError) {
+      logger.error('Found conflicting dependencies!')
       for (const [name, conflict] of Object.entries(e.conflicts)) {
-        logger.error(
-          `Multiple mismatching versions found for "${name}"!\n`,
-          conflict.map(dep =>
-            [...dep.path, dep.source]
-              .map(source => source.stringify())
-              .join(' depends on\n\t')
+        logger.error(`Dependency conflict for "${name}"! Reason: ${conflict.reason}`)
+        logger.info('Offending dependencies:\n', conflict.dependencies
+          .map(d => [...d.path, d.source]
+            .map(a => '\t' + a.stringify())
+            .join(' depends on\n')
           ).join('\n\n')
         )
       }
