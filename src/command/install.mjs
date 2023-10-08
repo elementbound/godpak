@@ -17,7 +17,10 @@ async function install () {
   logger.info('Resolved', dependencyTree.dependencies.length, 'addons')
 
   const depbag = dependencyTree.flatten()
-  logger.info('Reconciled dependencies:\n', depbag.map(source => '\t' + source.stringify()).join('\n'))
+  logger.info([
+    'Dependencies to install:',
+    ...depbag.map(dep => '\t' + dep.stringify())
+  ].join('\n'))
 }
 
 /**

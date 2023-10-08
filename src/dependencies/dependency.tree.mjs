@@ -6,6 +6,7 @@ import { grouping, toObject, toUnique } from '../funtils.mjs'
 import { logger } from '../log.mjs'
 import { storage } from '../storage/project.storage.mjs'
 import { Project } from '../project/project.mjs'
+import { DependencyConflict, coalesce } from './coalesce.mjs'
 
 /**
 * @extends DataObject<DependencyNode>
@@ -19,7 +20,7 @@ export class DependencyNode extends DataObject {
 }
 
 export class DependencyConflictError extends Error {
-  /** @type {Record<string, DependencyNode[]>} */
+  /** @type {Record<string, DependencyConflict>} */
   conflicts = {}
 
   constructor (conflicts) {
@@ -57,14 +58,18 @@ export class DependencyTree extends DataObject {
   * @throws {DependencyConflictError} for conflicting dependencies
   */
   flatten () {
-    const conflicts = this.findConflicts()
+    const flat = this.dependencies.reduce(grouping(dep => dep.source.name), [])
+      .map(([name, paths]) => [name, paths.reduce(coalesce)])
 
-    if (conflicts !== {}) {
+    const conflicts = flat.filter(([, dep]) => dep instanceof DependencyConflict)
+      .reduce(toObject(), {})
+
+    if (Object.keys(conflicts).length) {
       throw new DependencyConflictError(conflicts)
     }
 
-    return this.dependencies
-      .map(dependency => dependency.source)
+    return flat
+      .map(([, dep]) => dep.source)
       .reduce(toUnique(source => source.name), [])
   }
 
