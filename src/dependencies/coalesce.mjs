@@ -1,5 +1,7 @@
-import { DataObject } from "../data.object.mjs"
-import { DependencyNode } from "./dependency.tree.mjs"
+/* eslint-disable */
+import { DependencyNode } from './dependency.tree.mjs'
+/* eslint-enable */
+import { DataObject } from '../data.object.mjs'
 import * as versions from './versions.mjs'
 
 /**
@@ -27,7 +29,7 @@ export function coalesce (left, right) {
 
   if (left.source.source !== right.source.source) {
     return new DependencyConflict().with({
-      reason: `Mismatching sources!`,
+      reason: 'Mismatching sources!',
       dependencies: [left, right]
     })
   }

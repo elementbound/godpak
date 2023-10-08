@@ -51,5 +51,6 @@ export function coalesce (left, right) {
   }
 
   return collator.compare(leftSem.join('.'), rightSem.join('.')) < 0
-    ? right : left
+    ? right
+    : left
 }

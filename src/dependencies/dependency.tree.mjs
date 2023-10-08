@@ -127,4 +127,3 @@ export class DependencyTree extends DataObject {
     })
   }
 }
-
