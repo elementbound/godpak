@@ -5,16 +5,29 @@ import assert from 'node:assert'
 import * as fs from 'node:fs/promises'
 import { logger } from '../log.mjs'
 import { requireRootProject } from '../project/project.mjs'
+import { DependencyManager } from '../dependencies/dependency.manager.mjs'
 
-async function remove (addonName) {
+/**
+* Remove addons from project by name.
+* @param {string[]} addons Addon names
+* @returns {Promise<void>}
+*/
+async function remove (addons) {
   // Setup project
   const project = await requireRootProject()
-  const addon = project.addons[addonName]
+  const dependencyManager = new DependencyManager(project)
 
-  assert(
-    addon,
-    `Addon "${addonName}" is not in this project!`
-  )
+  for (const addonName of addons) {
+    const addon = project.addons[addonName]
+
+    assert(
+      addon,
+      `Addon "${addonName}" is not in this project!`
+    )
+
+    await dependencyManager.remove(addonName)
+  }
+  return
 
   if (!project.dependencies[addonName]) {
     logger.warn(`Addon "${addonName}" is not a dependency of this project!`)
@@ -36,7 +49,7 @@ async function remove (addonName) {
 * @param {Command} program Program
 */
 export function removeCommand (program) {
-  program.command('remove <addon>')
+  program.command('remove <addons...>')
     .alias('rm')
     .description('Remove an addon from the project.')
     .action(remove)
