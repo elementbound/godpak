@@ -34,7 +34,7 @@ export class GitSource extends EventEmitter {
     })
 
     const branches = await git.listBranches({
-      fs, dir: destination
+      fs, dir: destination, remote: 'origin'
     })
 
     if (tags.includes(source.version) || branches.includes(source.version)) {

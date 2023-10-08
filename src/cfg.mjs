@@ -47,6 +47,16 @@ export class ConfigData {
       ?.value
   }
 
+  enumerate (sectionName) {
+    const section = this.#findSection(sectionName) ?? new ConfigSection()
+
+    return Object.fromEntries(
+      section.lines
+        .filter(line => line instanceof EntryLine)
+        .map(entry => [entry.key, entry.value])
+    )
+  }
+
   set (sectionName, key, value) {
     if (!value) {
       // Shift arguments back by one
