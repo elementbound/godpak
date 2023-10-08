@@ -2,25 +2,13 @@
 import { Command } from 'commander'
 /* eslint-enable */
 import { requireRootProject } from '../project/project.mjs'
-import { logger } from '../log.mjs'
-import { DependencyTree } from '../dependencies/dependency.tree.mjs'
+import { DependencyManager } from '../dependencies/dependency.manager.mjs'
 
 async function install () {
   const project = await requireRootProject()
+  const dependencyManager = new DependencyManager(project)
 
-  logger.progress('Resolving dependencies...')
-  const dependencyTree = await DependencyTree.resolve(
-    project,
-    (_, visited, remains) => logger.progress('Resolving dependencies...', visited / (visited + remains))
-  )
-
-  logger.info('Resolved', dependencyTree.dependencies.length, 'addons')
-
-  const depbag = dependencyTree.flatten()
-  logger.info([
-    'Dependencies to install:',
-    ...depbag.map(dep => '\t' + dep.stringify())
-  ].join('\n'))
+  await dependencyManager.install()
 }
 
 /**

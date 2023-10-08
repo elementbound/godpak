@@ -40,19 +40,6 @@ export class DependencyTree extends DataObject {
   dependencies = []
 
   /**
-  * Find conflicts in the dependency tree.
-  * @returns {Record<string, DependencyTree[]>}
-  */
-  findConflicts () {
-    // TODO: Implement version compatibility, instead of failing on two different versions
-    const conflicts = this.dependencies.reduce(grouping(dep => dep.source.name), [])
-      .filter(([, group]) => group.length > 1)
-      .reduce(toObject(), {})
-
-    return conflicts
-  }
-
-  /**
   * Flatten the dependency tree into a list of addons to be installed.
   * @returns {AddonLocator[]} Addons
   * @throws {DependencyConflictError} for conflicting dependencies

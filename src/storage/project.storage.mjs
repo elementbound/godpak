@@ -18,6 +18,7 @@ export class ProjectStorage extends events.EventEmitter {
 
   /**
   * Fetch project from source locator
+  * @param {AddonLocator} locator Addon locator
   * @returns {Promise<string>} Resulting directory
   */
   async fetch (locator) {
