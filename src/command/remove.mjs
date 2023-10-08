@@ -2,8 +2,6 @@
 import { Command } from 'commander'
 /* eslint-enable */
 import assert from 'node:assert'
-import * as fs from 'node:fs/promises'
-import { logger } from '../log.mjs'
 import { requireRootProject } from '../project/project.mjs'
 import { DependencyManager } from '../dependencies/dependency.manager.mjs'
 
@@ -27,21 +25,6 @@ async function remove (addons) {
 
     await dependencyManager.remove(addonName)
   }
-  return
-
-  if (!project.dependencies[addonName]) {
-    logger.warn(`Addon "${addonName}" is not a dependency of this project!`)
-  }
-
-  // Remove addon from disk
-  await logger.spinner(`Removing directory "${addon.directory}"`)
-  await fs.rm(addon.directory, { recursive: true })
-  logger.info(`Removed directory "${addon.directory}"`)
-
-  // Remove from project
-  delete project.dependencies[addonName]
-  await project.persist()
-  logger.success(`Addon "${addon.name}" removed from project`)
 }
 
 /**
@@ -51,6 +34,6 @@ async function remove (addons) {
 export function removeCommand (program) {
   program.command('remove <addons...>')
     .alias('rm')
-    .description('Remove an addon from the project.')
+    .description('Remove addons from the project.')
     .action(remove)
 }

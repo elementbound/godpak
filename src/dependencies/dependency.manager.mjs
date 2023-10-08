@@ -30,11 +30,15 @@ export class DependencyManager {
     source.version ??= 'latest'
 
     if (!source.name) {
-      await logger.spinner(`Finding default addon for ${source.stringify()}`)
+      storage.on('progress', (_, loaded, total) =>
+        logger.progress(`Finding default addon for ${source.stringify()}`, loaded / (total ?? loaded))
+      )
       const sourceDirectory = await storage.fetch(source)
       const sourceProject = await requireProject(sourceDirectory)
       source.name = sourceProject.requireDefaultExport()
       logger.info('Defaulted to addon', source.name)
+
+      storage.removeAllListeners('progress')
     }
 
     // Check if project already has the addon
@@ -95,7 +99,10 @@ export class DependencyManager {
     // Persist change
     await this.#project.persist()
 
-    logger.success(`Removed addon "${name}" from project!`)
+    logger.success(removeDirectory
+      ? `Removed addon "${name}" from project!`
+      : 'Project updated'
+    )
   }
 
   /**
@@ -103,6 +110,11 @@ export class DependencyManager {
   * @returns {Promise<void>}
   */
   async install () {
+    if (Object.keys(this.#project.dependencies).length === 0) {
+      logger.success('No dependencies')
+      return
+    }
+
     logger.progress('Resolving dependencies')
     const dependencyTree = await DependencyTree.resolve(
       this.#project,
@@ -115,16 +127,9 @@ export class DependencyManager {
     const toInstall = dependencyTree.flatten()
       .filter(source => !this.#project.addons[source.name])
     logger.info(`Found ${toInstall.length} addons to install`)
-    console.log(JSON.stringify({
-      addons: this.#project.addons,
-      dependencies: this.#project.dependencies,
-      tree: dependencyTree.dependencies,
-      flat: dependencyTree.flatten(),
-      toInstall
-    }, undefined, 4))
 
-    for (const [i, source] of Object.entries(toInstall)) {
-      logger.info(`Installing ${source.stringify()} ( ${i + 1} / ${toInstall.length} )`)
+   for (const [i, source] of Object.entries(toInstall)) {
+      logger.info(`Installing ${source.stringify()} ( ${~~i + 1} / ${toInstall.length} )`)
       storage.on('progress', (phase, loaded, total) =>
         logger.progress(phase, loaded / (total ?? loaded))
       )
@@ -134,7 +139,7 @@ export class DependencyManager {
       const sourceAddon = sourceProject.addons[source.name]
       const destination = path.join(this.#project.addonsDirectory, source.name)
 
-      logger.info('Copying', sourceDirectory, '->', destination)
+      storage.removeAllListeners('progress')
 
       await copy(
         sourceAddon.directory, destination,

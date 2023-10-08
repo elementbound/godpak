@@ -43,7 +43,6 @@ export class ProjectStorage extends events.EventEmitter {
   async cleanup () {
     for (const [, directory] of this.#cache.entries()) {
       await fsp.rm(directory, { recursive: true })
-      logger.info('Cleanup:', directory)
     }
 
     this.#cache.clear()

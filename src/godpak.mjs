@@ -54,7 +54,9 @@ async function main () {
     }
     return 1
   } finally {
+    await logger.spinner('Cleaning up')
     await storage.cleanup()
+    logger.info('')
   }
 }
 

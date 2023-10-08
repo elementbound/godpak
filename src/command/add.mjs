@@ -25,6 +25,6 @@ async function add (sources) {
 export function addCommand (program) {
   program.command('add <sources...>')
     .alias('a')
-    .description('Add an addon by locator as a dependency.')
+    .description('Add addons to project as dependencies.')
     .action(add)
 }

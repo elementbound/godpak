@@ -28,7 +28,7 @@ describe('toUnique()', () => {
 describe('grouping()', () => {
   [
     ['should return empty', [], undefined, []],
-    ['should return single', [1], undefined, [1,[1]]],
+    ['should return single', [1], undefined, [[1,[1]]]],
     ['should group', [1, 2, 3, 4], i => i % 2, [[1, [1, 3]], [0, [2, 4]]]]
   ].forEach(
       ([name, input, mapper, expected]) =>

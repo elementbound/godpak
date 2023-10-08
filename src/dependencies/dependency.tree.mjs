@@ -48,8 +48,6 @@ export class DependencyTree extends DataObject {
   flatten () {
     const flat = this.dependencies.reduce(grouping(dep => dep.source.name), [])
       .map(([name, paths]) => [name, paths.reduce(coalesce)])
-    console.log('deps', this.dependencies)
-    console.log('flat', flat)
 
     const conflicts = flat.filter(([, dep]) => dep instanceof DependencyConflict)
       .reduce(toObject(), {})
