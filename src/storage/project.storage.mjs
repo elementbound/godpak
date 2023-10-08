@@ -4,7 +4,6 @@ import { AddonLocator } from '../project/addon.locator.mjs'
 import * as fsp from 'node:fs/promises'
 import * as events from 'node:events'
 import { gdpktmp } from '../fsutils.mjs'
-import { logger } from '../log.mjs'
 import { GitSource } from './git.source.mjs'
 
 /**

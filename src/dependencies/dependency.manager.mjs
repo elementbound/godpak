@@ -1,12 +1,14 @@
-import { copy } from "../fsutils.mjs";
-import { logger } from "../log.mjs";
-import { AddonLocator } from "../project/addon.locator.mjs";
-import { Project, requireProject } from "../project/project.mjs";
-import { storage } from "../storage/project.storage.mjs";
-import { DependencyTree } from "./dependency.tree.mjs";
+/* eslint-disable */
+import { AddonLocator } from '../project/addon.locator.mjs'
+import { Project, requireProject } from '../project/project.mjs'
+/* eslint-enable */
+import { copy } from '../fsutils.mjs'
+import { logger } from '../log.mjs'
+import { storage } from '../storage/project.storage.mjs'
+import { DependencyTree } from './dependency.tree.mjs'
 import * as path from 'node:path'
 import * as fsp from 'node:fs/promises'
-import confirm from '@inquirer/confirm';
+import confirm from '@inquirer/confirm'
 
 export class DependencyManager {
   /** @type {Project} */
@@ -44,7 +46,7 @@ export class DependencyManager {
     // Check if project already has the addon
     const projectDependency = this.#project.dependencies[source.name]
 
-    const overwrite = 
+    const overwrite =
       !projectDependency ||
       projectDependency.stringify() === source.stringify() ||
       await confirm({
@@ -68,7 +70,7 @@ export class DependencyManager {
 
     logger.success(overwrite
       ? `Successfully added addon ${source.stringify()}`
-      : `No dependencies were changed`
+      : 'No dependencies were changed'
     )
   }
 
@@ -128,7 +130,7 @@ export class DependencyManager {
       .filter(source => !this.#project.addons[source.name])
     logger.info(`Found ${toInstall.length} addons to install`)
 
-   for (const [i, source] of Object.entries(toInstall)) {
+    for (const [i, source] of Object.entries(toInstall)) {
       logger.info(`Installing ${source.stringify()} ( ${~~i + 1} / ${toInstall.length} )`)
       storage.on('progress', (phase, loaded, total) =>
         logger.progress(phase, loaded / (total ?? loaded))
