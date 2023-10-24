@@ -124,7 +124,6 @@ export class Project extends DataObject {
 
     if (this.exports.length !== 0) {
       this.#raw.set('godpak', 'exports', PackedStringArray.stringify(this.exports))
-      this.#raw.godpak.exports = PackedStringArray.stringify(this.exports)
     }
 
     const text = cfg.stringify(this.#raw)
