@@ -9,6 +9,7 @@ import { storage } from './storage/project.storage.mjs'
 import { installCommand } from './command/install.mjs'
 import { DependencyConflictError } from './dependencies/dependency.tree.mjs'
 import { treeCommand } from './command/tree.mjs'
+import { exportCommand } from './command/export.mjs'
 
 function parseVersion () {
   return Promise.resolve(import.meta.url)
@@ -33,6 +34,7 @@ async function main () {
   removeCommand(program)
   installCommand(program)
   treeCommand(program)
+  exportCommand(program)
 
   try {
     await program.parseAsync()
