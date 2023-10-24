@@ -10,8 +10,15 @@ import * as path from 'node:path'
 import * as fsp from 'node:fs/promises'
 import confirm from '@inquirer/confirm'
 
+/**
+* @typedef {object} ProjectLike
+* @property {Record<string, AddonLocator>} dependencies 
+* @property {string[]|undefined} exports
+* @property {function(): Promise<void>} persist
+*/
+
 export class DependencyManager {
-  /** @type {Project} */
+  /** @type {ProjectLike} */
   #project
 
   constructor (project) {
@@ -23,6 +30,7 @@ export class DependencyManager {
   * @param {AddonLocator} source Addon source
   * @param {object} [options] Options
   * @param {boolean} [options.noInstall=false] Disable install
+  * @param {boolean} [options.noPersist=false] Disable persist
   * @returns {Promise<void>}
   */
   async add (source, options) {
@@ -66,7 +74,9 @@ export class DependencyManager {
       : await this.install()
 
     // Persist change
-    await this.#project.persist()
+    if (!options.noPersist) {
+      await this.#project.persist()
+    }
 
     logger.success(overwrite
       ? `Successfully added addon ${source.stringify()}`

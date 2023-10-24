@@ -10,6 +10,7 @@ import { installCommand } from './command/install.mjs'
 import { DependencyConflictError } from './dependencies/dependency.tree.mjs'
 import { treeCommand } from './command/tree.mjs'
 import { exportCommand } from './command/export.mjs'
+import { addonAddCommand } from './command/addon-add.mjs'
 
 function parseVersion () {
   return Promise.resolve(import.meta.url)
@@ -35,6 +36,7 @@ async function main () {
   installCommand(program)
   treeCommand(program)
   exportCommand(program)
+  addonAddCommand(program)
 
   try {
     await program.parseAsync()

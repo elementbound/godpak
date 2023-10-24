@@ -64,7 +64,7 @@ export class DependencyTree extends DataObject {
   /**
   * Resolves the dependency tree of a given artifact ( project or addon ).
   *
-  * @param {object} root Artifact
+  * @param {object|AddonLocator[]} root Artifact
   * @param {Record<string, AddonLocator>} root.dependencies Artifact's dependencies
   * @param {(dependency: DependencyNode, visited: number, remaining: number) => void} progress Progress callback
   * @returns {Promise<DependencyTree>} Dependencies
@@ -80,7 +80,7 @@ export class DependencyTree extends DataObject {
     const dependencies = []
 
     // Add project dependencies
-    Object.values(root.dependencies)
+    (Array.isArray(root) ? root : Object.values(root.dependencies))
       .map(source => new DependencyNode().with({ source }))
       .forEach(dep => queue.push(dep))
 
