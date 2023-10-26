@@ -80,7 +80,7 @@ export class DependencyTree extends DataObject {
     const dependencies = []
 
     // Add project dependencies
-    (Array.isArray(root) ? root : Object.values(root.dependencies))
+    ;(Array.isArray(root) ? root : Object.values(root.dependencies))
       .map(source => new DependencyNode().with({ source }))
       .forEach(dep => queue.push(dep))
 

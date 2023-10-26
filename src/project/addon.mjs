@@ -79,10 +79,9 @@ export class Addon extends DataObject {
   async persist () {
     assert(this.#raw, `Settings not loaded for addon "${this.name}" at "${this.directory}", can't persist!`)
 
-    this.#raw.set('plugin', 'dependencies', Object.entries(this.dependencies)
+    Object.entries(this.dependencies)
       .map(([name, locator]) => [name, locator.stringify()])
-      .reduce(toObject(), {})
-    )
+      .forEach(([name, source]) => this.#raw.set('dependencies', name, source))
 
     const text = cfg.stringify(this.#raw)
     await fsp.writeFile(this.file, text, { encoding: 'utf8' })

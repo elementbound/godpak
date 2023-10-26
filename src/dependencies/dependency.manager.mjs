@@ -9,6 +9,7 @@ import { DependencyTree } from './dependency.tree.mjs'
 import * as path from 'node:path'
 import * as fsp from 'node:fs/promises'
 import confirm from '@inquirer/confirm'
+import { sleep } from '../utils.mjs'
 
 /**
 * @typedef {object} ProjectLike
@@ -122,17 +123,20 @@ export class DependencyManager {
   * @returns {Promise<void>}
   */
   async install () {
-    if (Object.keys(this.#project.dependencies).length === 0) {
-      logger.success('No dependencies')
-      return
-    }
-
     logger.progress('Resolving dependencies')
+    // TODO: Resolve dependencies of exports too
     const dependencyTree = await DependencyTree.resolve(
       this.#project,
       (_, visited, remaining) =>
         logger.progress('Resolving dependencies', visited / (visited + remaining))
     )
+
+    if (dependencyTree.dependencies.length === 0) {
+      await sleep(100) // Sleep to avoid getCursor() timeout
+      logger.success('No dependencies')
+      return
+    }
+
     logger.info(`Resolved ${dependencyTree.dependencies.length} dependencies`)
 
     await logger.spinner('Finding addons to install')
