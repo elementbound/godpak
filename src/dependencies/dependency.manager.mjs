@@ -13,7 +13,7 @@ import { sleep } from '../utils.mjs'
 
 /**
 * @typedef {object} ProjectLike
-* @property {Record<string, AddonLocator>} dependencies 
+* @property {Record<string, AddonLocator>} dependencies
 * @property {string[]|undefined} exports
 * @property {function(): Promise<void>} persist
 */

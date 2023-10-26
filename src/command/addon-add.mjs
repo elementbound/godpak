@@ -57,4 +57,3 @@ export function addonAddCommand (program) {
     .description('Add dependencies to an addon in the project.')
     .action(add)
 }
-
